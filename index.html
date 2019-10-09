@@ -18,15 +18,20 @@
     <div class="container">
       <div class="row">
         <div class="col-6" id="highscores"></div>
-        <div class="col-6 text-right" id="timer">0</div>
+        <div class="col-6 text-right" id="timer">&nbsp;</div>
       </div>
       <div class="row">
         <div id="app" class="w-100">
-          <form>
+          <h1 class="text-center">Coding quiz challenge</h1>
+          <p>
+            Press either of the two buttons below to start the game. Incorrect
+            answers incur a time penalty!
+          </p>
+          <form id="start" class="d-flex flex-column text-center">
             <button id="startEasy" class="btn btn-info">
               Start easy quiz!
             </button>
-            <button id="startHard" class="btn btn-info">
+            <button id="startHard" class="mt-3 btn btn-info">
               Start hard quiz!
             </button>
           </form>
