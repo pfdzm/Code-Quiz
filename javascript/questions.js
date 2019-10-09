@@ -13,7 +13,9 @@ var questionsEasy = [
 ];
 
 const questionsHard = [
-  { title: "A", choices: ["a", "b", "c"], answer: "c" },
-  { title: "B", choices: ["a", "b", "c"], answer: "a" },
-  { title: "C", choices: ["a", "b", "c"], answer: "b" }
+  { title: "A", choices: ["a", "b", "c", "d"], answer: "c" },
+  { title: "B", choices: ["a", "b", "c", "d"], answer: "a" },
+  { title: "C", choices: ["a", "b", "c", "d"], answer: "b" },
+  { title: "D", choices: ["a", "b", "c", "d"], answer: "c" },
+  { title: "E", choices: ["a", "b", "c", "d"], answer: "b" }
 ];
