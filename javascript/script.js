@@ -11,30 +11,13 @@ class CodeQuiz {
     this.feedbackId;
     this.score;
     this.difficulty;
+    this.messageAreaId = document.querySelector("#messageArea");
   }
   start(questions) {
     this.questions = questions;
     this.startTimer();
     this.loadQ(0);
-  }
-
-  restart() {
-    this.app.innerHTML = `
-    <h1 class="text-center">Coding quiz challenge</h1>
-            <p>
-              Press either of the two buttons below to start the game. Incorrect
-              answers incur a time penalty!
-            </p>
-            <form id="start" class="d-flex flex-column text-center">
-              <button id="startEasy" class="btn btn-info">
-                Start easy quiz!
-              </button>
-              <button id="startHard" class="mt-3 btn btn-info">
-                Start hard quiz!
-              </button>
-            </form>
-          </div>
-          <p id="feedback" class="text-info"></p>`;
+    this.difficulty = questions.value;
   }
 
   startTimer() {
@@ -54,7 +37,7 @@ class CodeQuiz {
   loadQ(i) {
     document.querySelector("#main").innerHTML = `
       <h1 class="text-center">${this.questions[i].title}</h1>
-      <form id="choices" class="d-flex flex-column">
+      <form id="choices" class="d-flex flex-column w-50 mx-auto">
       <button id="0" class="btn btn-info mb-3">${
         this.questions[i].choices[0]
       }</button>
@@ -99,11 +82,14 @@ class CodeQuiz {
       } else {
         this.stopTimer();
         this.setScore();
-        this.app.innerHTML += `
-        <p class="text-info">
-          You win! Your score is <span class="font-weight-bold">${this.score}</span>
-        </p>
-        `;
+        this.app.innerHTML = `
+        <h1 class="text-center">You win! Your score is <span class="font-weight-bold">${this.score}</span></h1>`;
+        // this.messageAreaId.innerHTML += `
+        // <p class="text-info">
+        //   You win! Your score is <span class="font-weight-bold">${this.score}</span>
+        // </p>
+        // `;
+
         this.setHighscore();
       }
     } else {
@@ -122,16 +108,16 @@ class CodeQuiz {
   setHighscore() {
     this.app.innerHTML += `
     <form action="" id="highscore">
-    <div class="form-group">
+    <div class="form-group d-flex flex-column w-50 mx-auto">
       <input type="text" id="name" class="form-control" placeholder="Enter your name"/>
-      <button type="submit" class="btn btn-info">Add to leaderboards</button>
+      <button type="submit" class="btn btn-info mt-3">Add to leaderboards</button>
     </div>
   </form>
 `;
     const highscoreForm = document.querySelector("form#highscore");
     highscoreForm.addEventListener("click", e => {
       e.preventDefault();
-      if (e.target.nodeName != "INPUT") {
+      if (e.target.nodeName == "BUTTON") {
         this.name = document.querySelector("#name").value;
 
         const highscores = localStorage.getItem(`highscores`);
@@ -140,12 +126,14 @@ class CodeQuiz {
         if (highscores) {
           scoreArr = JSON.parse(highscores);
         }
-        scoreArr.push({ name: this.name, score: this.score });
+        scoreArr.push({
+          name: this.name,
+          score: this.score,
+          difficulty: this.difficulty
+        });
 
-        console.log(scoreArr);
         localStorage.setItem(`highscores`, JSON.stringify(scoreArr));
-
-        this.restart();
+        location.reload();
       }
     });
   }
@@ -164,12 +152,12 @@ document.querySelector("form#start").addEventListener("click", e => {
     switch (e.target.id) {
       case "startHard":
         quiz.start(questionsHard);
-        this.difficulty = "hard";
+        quiz.difficulty = "hard";
         break;
 
       case "startEasy":
         quiz.start(questionsEasy);
-        this.difficulty = "easy";
+        quiz.difficulty = "easy";
         break;
 
       default:
