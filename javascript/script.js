@@ -115,7 +115,7 @@ class CodeQuiz {
     highscoreForm.addEventListener("click", e => {
       e.preventDefault();
       if (e.target.nodeName == "BUTTON") {
-        if ((document.querySelector("#name").value == "")) {
+        if (document.querySelector("#name").value == "") {
           this.name = "Anonymous player";
         } else this.name = document.querySelector("#name").value;
 

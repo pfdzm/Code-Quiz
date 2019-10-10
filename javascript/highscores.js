@@ -3,9 +3,12 @@ class Highscore {
     this.target = document.querySelector("#scoreTable");
     this.reset = document.querySelector("#resetScores");
     this.scores;
-    this.reset.addEventListener("click", () => {
-      localStorage.clear();
-      this.target.innerHTML = ``;
+    this.reset.addEventListener("click", e => {
+      e.preventDefault();
+      if (confirm("Are you sure you want to clear all scores?")) {
+        localStorage.clear();
+        this.target.innerHTML = ``;
+      }
     });
   }
 
