@@ -17,8 +17,14 @@
   <body>
     <div class="container">
       <div class="row">
-        <div class="col-6" id="highscores"><a class="font-weight-bold text-info" href="./highscores.html">View Highscores</a></div>
-        <div class="col-6 text-right" id="timer">&nbsp;</div>
+        <div class="col-6" id="highscores">
+          <a class="font-weight-bold text-info" href="./highscores.html"
+            >View Highscores</a
+          >
+        </div>
+        <div class="col-6 text-right">
+          <span id="timer" class="font-weight-bold text-info">&infin;</span>
+        </div>
       </div>
       <div class="row">
         <div id="app" class="mt-3 w-100">
@@ -28,7 +34,10 @@
               Press either of the two buttons below to start the game. Incorrect
               answers incur a time penalty!
             </p>
-            <form id="start" class="d-flex flex-row justify-content-around text-center">
+            <form
+              id="start"
+              class="d-flex flex-row justify-content-around text-center"
+            >
               <button id="startEasy" class="btn btn-info">
                 Start easy quiz!
               </button>
@@ -39,7 +48,6 @@
           </div>
           <div id="messageArea" class="w-50">
             <p id="feedback" class="text-info"></p>
-
           </div>
         </div>
       </div>

@@ -1,20 +1,20 @@
 class CodeQuiz {
   constructor() {
+    // Let's grab some elements we will need later
     this.app = document.querySelector("#app");
     this.timerId = document.querySelector("#timer");
-    this.timer = 75;
-    this.timerId.textContent = this.timer;
+    this.messageAreaId = document.querySelector("#messageArea");
     this.nIntervId;
-    this.btnHard = document.querySelector("#startHard");
-    this.btnEasy = document.querySelector("#startEasy");
     this.choice;
     this.feedbackId;
     this.score;
     this.difficulty;
-    this.messageAreaId = document.querySelector("#messageArea");
   }
   start(questions) {
     this.questions = questions;
+    // 15 seconds per question
+    this.timer = questions.length * 15;
+    this.timerId.textContent = this.timer;
     this.startTimer();
     this.loadQ(0);
     this.difficulty = questions.value;
