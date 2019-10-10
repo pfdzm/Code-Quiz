@@ -1,5 +1,6 @@
 class CodeQuiz {
   constructor() {
+    this.app = document.querySelector("#app");
     this.timerId = document.querySelector("#timer");
     this.timer = 75;
     this.timerId.textContent = this.timer;
@@ -7,7 +8,7 @@ class CodeQuiz {
     this.btnHard = document.querySelector("#startHard");
     this.btnEasy = document.querySelector("#startEasy");
     this.choice;
-    this.feedbackMsg;
+    this.feedbackId;
     this.score;
   }
   start(questions) {
@@ -19,9 +20,10 @@ class CodeQuiz {
   startTimer() {
     this.nIntervId = setInterval(() => {
       this.timerId.textContent = --this.timer;
-      this.checkTimer();
-      if (this.feedbackMsg.textContent != ``) {
-        this.feedbackMsg.textContent = ``;
+      this.setScore();
+      if (this.timer < 1) {
+        this.stopTimer();
+        this.feedback("You lose, better luck next time!", 0);
       }
     }, 1000);
   }
@@ -29,16 +31,8 @@ class CodeQuiz {
     clearInterval(this.nIntervId);
   }
 
-  checkTimer() {
-    if (this.timer < 1) {
-      document.querySelector("#app").innerHTML += `
-      <h1 class="text-center">Time's up!</h1>`;
-      this.stopTimer();
-    }
-  }
-
   loadQ(i) {
-    document.querySelector("#app").innerHTML = `
+    document.querySelector("#main").innerHTML = `
       <h1 class="text-center">${this.questions[i].title}</h1>
       <form id="choices" class="d-flex flex-column">
       <button id="0" class="btn btn-info mb-3">${
@@ -54,50 +48,74 @@ class CodeQuiz {
         this.questions[i].choices[3]
       }</button>
       </form>
-      <p id="feedback" class="text-info"></p>
       `;
-    const form = document.querySelector("form#choices");
-    this.feedbackMsg = document.querySelector("#feedback");
 
-    for (let button of form) {
-      button.addEventListener("click", e => {
-        e.preventDefault();
+    const form = document.querySelector("form#choices");
+    form.addEventListener("click", e => {
+      e.preventDefault();
+      if (e.target.nodeName == "BUTTON") {
         this.answer = e.target.textContent;
+
         this.check(e.target.textContent, i);
-      });
-    }
-    document
-      .querySelector("form#choices")
-      .addEventListener("submit", function(e) {
-        preventDefault();
-      });
+      }
+    });
   }
+
+  feedback(msg, duration) {
+    this.feedbackId = document.querySelector("#feedback");
+    this.feedbackId.textContent = `${msg}`;
+    if (duration > 0) {
+      setTimeout(() => {
+        this.feedbackId.textContent = ``;
+      }, 1000 * duration);
+    }
+  }
+
   check(answer, i) {
     if (answer == this.questions[i].answer) {
-      console.log("correct");
+      this.feedback("Correct!", 2);
       if (this.questions[++i]) {
         this.loadQ(i);
-        this.feedbackMsg.textContent = `Correct!`;
       } else {
         this.stopTimer();
-        this.score = parseInt(timer.textContent);
+        this.setScore();
+        this.app.innerHTML += `
+        <p class="text-info">
+          You win! Your score is <span class="font-weight-bold">${this.score}</span>
+        </p>`;
       }
-    } else this.feedbackMsg.textContent = `Wrong!`;
+    } else {
+      this.feedback("Wrong!", 2);
+      if (this.timer - 15 < 0) {
+        this.timer = 0;
+        this.timerId.textContent = this.timer;
+        this.stopTimer();
+      } else {
+        this.timer = this.timer - 15;
+        this.timerId.textContent = this.timer;
+      }
+    }
+  }
+
+  setScore() {
+    this.score = this.timer;
   }
 }
 
 const quiz = new CodeQuiz();
 
-document.querySelector("form#start").addEventListener("submit", function(e) {
+document.querySelector("form#start").addEventListener("click", function(e) {
   e.preventDefault();
-});
 
-quiz.btnEasy.addEventListener("click", e => {
-  e.preventDefault();
-  quiz.start(questionsEasy);
-});
+  if (e.target.nodeName == "BUTTON") {
+    switch (e.target.id) {
+      case "startHard":
+        quiz.start(questionsHard);
+        break;
 
-quiz.btnHard.addEventListener("click", e => {
-  e.preventDefault();
-  quiz.start(questionsHard);
+      default:
+        quiz.start(questionsEasy);
+        break;
+    }
+  }
 });
