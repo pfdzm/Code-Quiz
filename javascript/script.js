@@ -77,20 +77,13 @@ class CodeQuiz {
   check(answer, i) {
     if (answer == this.questions[i].answer) {
       this.feedback("Correct!", 2);
+      // check if there are more questions in the pool
       if (this.questions[++i]) {
         this.loadQ(i);
       } else {
         this.stopTimer();
         this.setScore();
-        this.app.innerHTML = `
-        <h1 class="text-center">You win! Your score is <span class="font-weight-bold">${this.score}</span></h1>`;
-        // this.messageAreaId.innerHTML += `
-        // <p class="text-info">
-        //   You win! Your score is <span class="font-weight-bold">${this.score}</span>
-        // </p>
-        // `;
-
-        this.setHighscore();
+        this.setHighscore("win");
       }
     } else {
       this.feedback("Wrong!", 2);
@@ -98,6 +91,8 @@ class CodeQuiz {
         this.timer = 0;
         this.timerId.textContent = this.timer;
         this.stopTimer();
+        this.setScore();
+        this.setHighscore("lose");
       } else {
         this.timer = this.timer - 15;
         this.timerId.textContent = this.timer;
@@ -105,7 +100,9 @@ class CodeQuiz {
     }
   }
 
-  setHighscore() {
+  setHighscore(flag) {
+    this.app.innerHTML = `
+        <h1 class="text-center">You ${flag}! Your score is <span class="font-weight-bold">${this.score}</span></h1>`;
     this.app.innerHTML += `
     <form action="" id="highscore">
     <div class="form-group d-flex flex-column w-50 mx-auto">
@@ -118,7 +115,9 @@ class CodeQuiz {
     highscoreForm.addEventListener("click", e => {
       e.preventDefault();
       if (e.target.nodeName == "BUTTON") {
-        this.name = document.querySelector("#name").value;
+        if ((document.querySelector("#name").value == "")) {
+          this.name = "Anonymous player";
+        } else this.name = document.querySelector("#name").value;
 
         const highscores = localStorage.getItem(`highscores`);
 
@@ -127,14 +126,14 @@ class CodeQuiz {
           scoreArr = JSON.parse(highscores);
         }
         scoreArr.push({
-          index: scoreArr.length+1,
+          index: scoreArr.length + 1,
           name: this.name,
           score: this.score,
           difficulty: this.difficulty
         });
 
         localStorage.setItem(`highscores`, JSON.stringify(scoreArr));
-        location.href = './highscores.html';
+        location.href = "./highscores.html";
       }
     });
   }
