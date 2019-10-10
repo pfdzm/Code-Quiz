@@ -10,11 +10,31 @@ class CodeQuiz {
     this.choice;
     this.feedbackId;
     this.score;
+    this.difficulty;
   }
   start(questions) {
     this.questions = questions;
     this.startTimer();
     this.loadQ(0);
+  }
+
+  restart() {
+    this.app.innerHTML = `
+    <h1 class="text-center">Coding quiz challenge</h1>
+            <p>
+              Press either of the two buttons below to start the game. Incorrect
+              answers incur a time penalty!
+            </p>
+            <form id="start" class="d-flex flex-column text-center">
+              <button id="startEasy" class="btn btn-info">
+                Start easy quiz!
+              </button>
+              <button id="startHard" class="mt-3 btn btn-info">
+                Start hard quiz!
+              </button>
+            </form>
+          </div>
+          <p id="feedback" class="text-info"></p>`;
   }
 
   startTimer() {
@@ -82,7 +102,9 @@ class CodeQuiz {
         this.app.innerHTML += `
         <p class="text-info">
           You win! Your score is <span class="font-weight-bold">${this.score}</span>
-        </p>`;
+        </p>
+        `;
+        this.setHighscore();
       }
     } else {
       this.feedback("Wrong!", 2);
@@ -97,6 +119,37 @@ class CodeQuiz {
     }
   }
 
+  setHighscore() {
+    this.app.innerHTML += `
+    <form action="" id="highscore">
+    <div class="form-group">
+      <input type="text" id="name" class="form-control" placeholder="Enter your name"/>
+      <button type="submit" class="btn btn-info">Add to leaderboards</button>
+    </div>
+  </form>
+`;
+    const highscoreForm = document.querySelector("form#highscore");
+    highscoreForm.addEventListener("click", e => {
+      e.preventDefault();
+      if (e.target.nodeName != "INPUT") {
+        this.name = document.querySelector("#name").value;
+
+        const highscores = localStorage.getItem(`highscores`);
+
+        let scoreArr = [];
+        if (highscores) {
+          scoreArr = JSON.parse(highscores);
+        }
+        scoreArr.push({ name: this.name, score: this.score });
+
+        console.log(scoreArr);
+        localStorage.setItem(`highscores`, JSON.stringify(scoreArr));
+
+        this.restart();
+      }
+    });
+  }
+
   setScore() {
     this.score = this.timer;
   }
@@ -104,17 +157,22 @@ class CodeQuiz {
 
 const quiz = new CodeQuiz();
 
-document.querySelector("form#start").addEventListener("click", function(e) {
+document.querySelector("form#start").addEventListener("click", e => {
   e.preventDefault();
 
   if (e.target.nodeName == "BUTTON") {
     switch (e.target.id) {
       case "startHard":
         quiz.start(questionsHard);
+        this.difficulty = "hard";
+        break;
+
+      case "startEasy":
+        quiz.start(questionsEasy);
+        this.difficulty = "easy";
         break;
 
       default:
-        quiz.start(questionsEasy);
         break;
     }
   }
