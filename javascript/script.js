@@ -109,7 +109,7 @@ class CodeQuiz {
     this.app.innerHTML += `
     <form action="" id="highscore">
     <div class="form-group d-flex flex-column w-50 mx-auto">
-      <input type="text" id="name" class="form-control" placeholder="Enter your name"/>
+      <input type="text" id="name" class="form-control" autocomplete="off" placeholder="Enter your name"/>
       <button type="submit" class="btn btn-info mt-3">Add to leaderboards</button>
     </div>
   </form>
@@ -127,13 +127,14 @@ class CodeQuiz {
           scoreArr = JSON.parse(highscores);
         }
         scoreArr.push({
+          index: scoreArr.length+1,
           name: this.name,
           score: this.score,
           difficulty: this.difficulty
         });
 
         localStorage.setItem(`highscores`, JSON.stringify(scoreArr));
-        location.reload();
+        location.href = './highscores.html';
       }
     });
   }

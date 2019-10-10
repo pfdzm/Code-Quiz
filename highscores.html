@@ -20,15 +20,30 @@
         <div class="col-6" id="highscores">
           <a class="font-weight-bold text-info" href="./index.html">Play!</a>
         </div>
-        <div class="col-6 text-right">&nbsp;</div>
+        <div class="col-6 text-right">
+          <button id="resetScores" class="btn btn-info">Clear scores</button>
+        </div>
       </div>
       <div class="row">
         <div id="app" class="mt-3 w-100">
           <div id="highscoresDisplay">
             <h1 class="text-center">Highscores</h1>
+            <p>Below you will find a list of all scores logged on your browser, in chronological order.</p>
+            <table class="table table-striped">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Score</th>
+                  <th scope="col">Game mode</th>
+                </tr>
+              </thead>
+              <tbody id="scoreTable"></tbody>
+            </table>
           </div>
         </div>
       </div>
     </div>
+    <script src="./javascript/highscores.js"></script>
   </body>
 </html>
