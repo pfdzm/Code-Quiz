@@ -127,7 +127,7 @@ class CodeQuiz {
           scoreArr = JSON.parse(highscores);
         }
         scoreArr.push({
-          index: scoreArr.length + 1,
+          // index: scoreArr.length + 1,
           name: this.name,
           score: this.score,
           difficulty: this.difficulty

@@ -14,10 +14,17 @@ class Highscore {
 
   renderScores() {
     this.scores = JSON.parse(localStorage.getItem("highscores"));
+
     if (this.scores != null) {
-      for (const iterator of this.scores) {
+      // create an iterator over the sorted highscores array of objects
+      // create a table row for each highscore object
+      for (const iterator of this.scores.sort((a, b) => {
+        return b.score - a.score;
+      })) {
         const tr = document.createElement("tr");
+        // iterate over each property of a highscore object and put it in a table cell
         for (const key in iterator) {
+          // prevent iterating over Prototype properties
           if (iterator.hasOwnProperty(key)) {
             const element = iterator[key];
             const td = document.createElement("td");
