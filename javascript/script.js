@@ -26,7 +26,8 @@ class CodeQuiz {
       this.setScore();
       if (this.timer < 1) {
         this.stopTimer();
-        this.feedback("You lose, better luck next time!", 0);
+        this.setScore();
+        this.setHighscore("lose");
       }
     }, 1000);
   }
