@@ -1,27 +1,32 @@
 class CodeQuiz {
   constructor() {
+    // Let's grab some elements we will need later
+    this.app = document.querySelector("#app");
     this.timerId = document.querySelector("#timer");
-    this.timer = 75;
-    this.timerId.textContent = this.timer;
+    this.messageAreaId = document.querySelector("#messageArea");
     this.nIntervId;
-    this.btnHard = document.querySelector("#startHard");
-    this.btnEasy = document.querySelector("#startEasy");
     this.choice;
-    this.feedbackMsg;
+    this.feedbackId;
     this.score;
+    this.difficulty;
   }
   start(questions) {
     this.questions = questions;
+    // 15 seconds per question
+    this.timer = questions.length * 15;
+    this.timerId.textContent = this.timer;
     this.startTimer();
     this.loadQ(0);
+    this.difficulty = questions.value;
   }
 
   startTimer() {
     this.nIntervId = setInterval(() => {
       this.timerId.textContent = --this.timer;
-      this.checkTimer();
-      if (this.feedbackMsg.textContent != ``) {
-        this.feedbackMsg.textContent = ``;
+      this.setScore();
+      if (this.timer < 1) {
+        this.stopTimer();
+        this.feedback("You lose, better luck next time!", 0);
       }
     }, 1000);
   }
@@ -29,18 +34,10 @@ class CodeQuiz {
     clearInterval(this.nIntervId);
   }
 
-  checkTimer() {
-    if (this.timer < 1) {
-      document.querySelector("#app").innerHTML += `
-      <h1 class="text-center">Time's up!</h1>`;
-      this.stopTimer();
-    }
-  }
-
   loadQ(i) {
-    document.querySelector("#app").innerHTML = `
+    document.querySelector("#main").innerHTML = `
       <h1 class="text-center">${this.questions[i].title}</h1>
-      <form id="choices" class="d-flex flex-column">
+      <form id="choices" class="d-flex flex-column w-50 mx-auto">
       <button id="0" class="btn btn-info mb-3">${
         this.questions[i].choices[0]
       }</button>
@@ -54,50 +51,117 @@ class CodeQuiz {
         this.questions[i].choices[3]
       }</button>
       </form>
-      <p id="feedback" class="text-info"></p>
       `;
-    const form = document.querySelector("form#choices");
-    this.feedbackMsg = document.querySelector("#feedback");
 
-    for (let button of form) {
-      button.addEventListener("click", e => {
-        e.preventDefault();
+    const form = document.querySelector("form#choices");
+    form.addEventListener("click", e => {
+      e.preventDefault();
+      if (e.target.nodeName == "BUTTON") {
         this.answer = e.target.textContent;
+
         this.check(e.target.textContent, i);
-      });
-    }
-    document
-      .querySelector("form#choices")
-      .addEventListener("submit", function(e) {
-        preventDefault();
-      });
+      }
+    });
   }
+
+  feedback(msg, duration) {
+    this.feedbackId = document.querySelector("#feedback");
+    this.feedbackId.textContent = `${msg}`;
+    if (duration > 0) {
+      setTimeout(() => {
+        this.feedbackId.textContent = ``;
+      }, 1000 * duration);
+    }
+  }
+
   check(answer, i) {
     if (answer == this.questions[i].answer) {
-      console.log("correct");
+      this.feedback("Correct!", 2);
+      // check if there are more questions in the pool
       if (this.questions[++i]) {
         this.loadQ(i);
-        this.feedbackMsg.textContent = `Correct!`;
       } else {
         this.stopTimer();
-        this.score = parseInt(timer.textContent);
+        this.setScore();
+        this.setHighscore("win");
       }
-    } else this.feedbackMsg.textContent = `Wrong!`;
+    } else {
+      this.feedback("Wrong!", 2);
+      if (this.timer - 15 < 0) {
+        this.timer = 0;
+        this.timerId.textContent = this.timer;
+        this.stopTimer();
+        this.setScore();
+        this.setHighscore("lose");
+      } else {
+        this.timer = this.timer - 15;
+        this.timerId.textContent = this.timer;
+      }
+    }
+  }
+
+  setHighscore(flag) {
+    this.app.innerHTML = `
+        <h1 class="text-center">You ${flag}! Your score is <span class="font-weight-bold">${this.score}</span></h1>`;
+    this.app.innerHTML += `
+    <form action="" id="highscore">
+    <div class="form-group d-flex flex-column w-50 mx-auto">
+      <input type="text" id="name" class="form-control" autocomplete="off" placeholder="Enter your name"/>
+      <button type="submit" class="btn btn-info mt-3">Add to leaderboards</button>
+    </div>
+  </form>
+`;
+    const highscoreForm = document.querySelector("form#highscore");
+    highscoreForm.addEventListener("click", e => {
+      e.preventDefault();
+      if (e.target.nodeName == "BUTTON") {
+        if (document.querySelector("#name").value == "") {
+          this.name = "Anonymous player";
+        } else this.name = document.querySelector("#name").value;
+
+        const highscores = localStorage.getItem(`highscores`);
+
+        let scoreArr = [];
+        if (highscores) {
+          scoreArr = JSON.parse(highscores);
+        }
+        scoreArr.push({
+          index: scoreArr.length + 1,
+          name: this.name,
+          score: this.score,
+          difficulty: this.difficulty
+        });
+
+        localStorage.setItem(`highscores`, JSON.stringify(scoreArr));
+        location.href = "./highscores.html";
+      }
+    });
+  }
+
+  setScore() {
+    this.score = this.timer;
   }
 }
 
 const quiz = new CodeQuiz();
 
-document.querySelector("form#start").addEventListener("submit", function(e) {
+document.querySelector("form#start").addEventListener("click", e => {
   e.preventDefault();
-});
 
-quiz.btnEasy.addEventListener("click", e => {
-  e.preventDefault();
-  quiz.start(questionsEasy);
-});
+  if (e.target.nodeName == "BUTTON") {
+    switch (e.target.id) {
+      case "startHard":
+        quiz.start(questionsHard);
+        quiz.difficulty = "hard";
+        break;
 
-quiz.btnHard.addEventListener("click", e => {
-  e.preventDefault();
-  quiz.start(questionsHard);
+      case "startEasy":
+        quiz.start(questionsEasy);
+        quiz.difficulty = "easy";
+        break;
+
+      default:
+        break;
+    }
+  }
 });

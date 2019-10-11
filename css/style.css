@@ -1,0 +1,12 @@
+body {
+  max-width: 768px;
+  margin: 0 auto;
+}
+
+li {
+  list-style: decimal;
+}
+
+#resetScores {
+  cursor: pointer;
+}
