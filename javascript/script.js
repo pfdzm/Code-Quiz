@@ -36,25 +36,28 @@ class CodeQuiz {
   }
 
   loadQ(i) {
-    document.querySelector("#main").innerHTML = `
-      <h1 class="text-center">${this.questions[i].title}</h1>
-      <form id="choices" class="d-flex flex-column w-50 mx-auto">
-      <button id="0" class="btn btn-info mb-3">${
-        this.questions[i].choices[0]
-      }</button>
-      <button id="1" class="btn btn-info mb-3">${
-        this.questions[i].choices[1]
-      }</button>
-      <button id="2" class="btn btn-info mb-3">${
-        this.questions[i].choices[2]
-      }</button>
-      <button id="3" class="btn btn-info mb-3">${
-        this.questions[i].choices[3]
-      }</button>
-      </form>
-      `;
+    var main = document.querySelector("#main");
+    main.innerHTML = "";
 
-    const form = document.querySelector("form#choices");
+    let form = document.createElement("form");
+    form.setAttribute("id", "choices");
+    form.classList.add("d-flex", "flex-column", "w-50", "mx-auto");
+    main.append(form);
+
+    let question = document.createElement("h1");
+    question.classList.add("text-center");
+    question.textContent = this.questions[i].title;
+    form.append(question);
+
+    for (let index = 0; index < this.questions[i].choices.length; index++) {
+      const element = this.questions[i].choices[index];
+      let button = document.createElement("button");
+      button.textContent = element;
+      button.setAttribute("id", index);
+      button.classList.add("btn", "btn-info", "mb-3");
+      form.append(button);
+    }
+
     form.addEventListener("click", e => {
       e.preventDefault();
       if (e.target.nodeName == "BUTTON") {
@@ -102,6 +105,7 @@ class CodeQuiz {
   }
 
   setHighscore(flag) {
+    // this part could also be done with document.createElement() and HTMLNodeElement.append() similar to e.g. the loadQ(i) method
     this.app.innerHTML = `
         <h1 class="text-center">You ${flag}! Your score is <span class="font-weight-bold">${this.score}</span></h1>`;
     this.app.innerHTML += `
