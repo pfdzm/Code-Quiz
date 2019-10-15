@@ -78,7 +78,7 @@ const questionsHard = [
     answer: "42==42"
   },
   {
-    title: "What will the following statement return? Boolean('false', '0', '')",
+    title: "What will the following statement return? Boolean('false' && '0' && '')",
     choices: ["true", "false", "null", "undefined"],
     answer: "true"
   }
