@@ -4,7 +4,7 @@ Code Quiz is a simple quiz app to put your JavaScript knowledge to the test! Bui
 
 ## Deployment
 
-Deployed to GH Pages using CD from GitHub.
+Deployed to [GH Pages](https://pfdzm.github.io/Code-Quiz/) using CD from GitHub.
 
 ## Screenshots
 
